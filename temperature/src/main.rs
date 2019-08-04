@@ -1,30 +1,51 @@
 use std::io;
-use std::f32::NAN;
+use crate::Unit::*;
 
 fn main() {
     let degrees: f32 = read_float();
-    let unit: char = read_unit();
+    let unit: Unit = read_unit();
+    let temperature = Temperature(degrees, unit);
     println!(
         "The temperature you entered is {}",
-        format_temperature(degrees, unit)
+        temperature.to_string()
     );
-    warn_absolute_zero(degrees, unit);
+    warn_absolute_zero(temperature);
     println!(
         "{} = {}",
-        format_temperature(degrees, unit),
-        format_temperature(
-            match unit {
-                'F' => to_celsius(degrees),
-                'C' => to_fahrenheit(degrees),
-                _ => NAN
-            },
-            match unit {
-                'F' => 'C',
-                'C' => 'F',
-                _ => '\0'
-            }
-        )
+        temperature.to_string(),
+        convert(temperature).to_string()
     );
+}
+
+fn convert(t: Temperature) -> Temperature {
+    match t.1 {
+        Fahrenheit => Temperature(to_celsius(t.0), Celsius),
+        Celsius => Temperature(to_fahrenheit(t.0), Fahrenheit)
+    }
+}
+
+#[derive(Copy, Clone)]
+enum Unit {
+    Celsius,
+    Fahrenheit
+}
+
+impl ToString for Unit {
+    fn to_string(&self) -> String {
+        match self {
+            Fahrenheit => "°F".to_string(),
+            Celsius => "°C".to_string()
+        }
+    }
+}
+
+#[derive(Copy, Clone)]
+struct Temperature(f32, Unit);
+
+impl ToString for Temperature {
+    fn to_string(&self) -> String {
+        format!("{} {}", self.0, self.1.to_string())
+    }
 }
 
 fn to_celsius(f: f32) -> f32 {
@@ -35,23 +56,18 @@ fn to_fahrenheit(c: f32) -> f32 {
     (c + 40.0) * 1.8 - 40.0
 }
 
-fn warn_absolute_zero(degrees: f32, unit: char) {
-    let abs_zero = match unit {
-        'F' => -459.67,
-        'C' => -273.15,
-        _ => NAN
+fn warn_absolute_zero(t: Temperature) {
+    let abs_zero = match t.1 {
+        Fahrenheit => Temperature(-459.67, Fahrenheit),
+        Celsius => Temperature(-273.15, Celsius)
     };
-    if degrees < abs_zero {
+    if t.0 < abs_zero.0 {
         println!(
             "Warning! {} is less than absolute zero ({}).",
-            format_temperature(degrees, unit),
-            format_temperature(abs_zero, unit)
+            t.to_string(),
+            abs_zero.to_string()
         );
     }
-}
-
-fn format_temperature(degrees: f32, unit: char) -> String {
-    format!("{} °{}", degrees, unit)
 }
 
 fn read_float() -> f32 {
@@ -73,7 +89,7 @@ fn read_float() -> f32 {
     }
 }
 
-fn read_unit() -> char {
+fn read_unit() -> Unit {
     loop {
         println!("Enter a symbol (C or F): ");
 
@@ -83,8 +99,8 @@ fn read_unit() -> char {
             .expect("Failed to read line");
 
         match line.trim().to_ascii_uppercase().as_ref() {
-            "F" => break 'F',
-            "C" => break 'C',
+            "F" => break Fahrenheit,
+            "C" => break Celsius,
             unit => {
                 println!("Invalid unit: {}", unit);
                 continue;
