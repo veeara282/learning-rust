@@ -1,14 +1,11 @@
-use std::io;
 use crate::Unit::*;
+use std::io;
 
 fn main() {
     let degrees: f32 = read_float();
     let unit: Unit = read_unit();
     let temperature = Temperature(degrees, unit);
-    println!(
-        "The temperature you entered is {}",
-        temperature.to_string()
-    );
+    println!("The temperature you entered is {}", temperature.to_string());
     warn_absolute_zero(temperature);
     println!(
         "{} = {}",
@@ -20,21 +17,21 @@ fn main() {
 fn convert(t: Temperature) -> Temperature {
     match t.1 {
         Fahrenheit => Temperature(to_celsius(t.0), Celsius),
-        Celsius => Temperature(to_fahrenheit(t.0), Fahrenheit)
+        Celsius => Temperature(to_fahrenheit(t.0), Fahrenheit),
     }
 }
 
 #[derive(Copy, Clone)]
 enum Unit {
     Celsius,
-    Fahrenheit
+    Fahrenheit,
 }
 
 impl ToString for Unit {
     fn to_string(&self) -> String {
         match self {
             Fahrenheit => "°F".to_string(),
-            Celsius => "°C".to_string()
+            Celsius => "°C".to_string(),
         }
     }
 }
@@ -59,7 +56,7 @@ fn to_fahrenheit(c: f32) -> f32 {
 fn warn_absolute_zero(t: Temperature) {
     let abs_zero = match t.1 {
         Fahrenheit => Temperature(-459.67, Fahrenheit),
-        Celsius => Temperature(-273.15, Celsius)
+        Celsius => Temperature(-273.15, Celsius),
     };
     if t.0 < abs_zero.0 {
         println!(
@@ -73,12 +70,12 @@ fn warn_absolute_zero(t: Temperature) {
 fn read_float() -> f32 {
     loop {
         println!("Enter a number:");
-        
+
         let mut line = String::new();
         io::stdin()
             .read_line(&mut line)
             .expect("Failed to read line");
-        
+
         match line.trim().parse() {
             Ok(num) => break num,
             Err(_) => {
