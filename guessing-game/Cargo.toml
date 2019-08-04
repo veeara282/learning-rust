@@ -1,8 +1,9 @@
 [package]
 name = "guessing-game"
 version = "0.1.0"
-authors = ["Aidan Fitzgerald <duckjr159@gmail.com>"]
+authors = ["Evelyn Fitzgerald <acf67@cornell.edu>"]
 edition = "2018"
+license = "MIT"
 
 [dependencies]
 rand = "0.3.14"
