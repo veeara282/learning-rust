@@ -1,6 +1,6 @@
 [package]
 name = "temperature"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Evelyn Fitzgerald <acf67@cornell.edu>"]
 edition = "2018"
 license = "MIT"
