@@ -23,22 +23,27 @@ fn verse_body(i: u8) {
     }
 }
 
-fn verse_line(i: u8) -> &'static str {
-    match i {
-        12 => "Twelve drummers drumming",
-        11 => "Eleven pipers piping",
-        10 => "Ten lords a-leaping,",
-        9 => "Nine ladies dancing,",
-        8 => "Eight maids a-milking,",
-        7 => "Seven swans a-swimming,",
-        6 => "Six geese a-laying,",
-        5 => "Five golden rings,", // North American variant
-        4 => "Four calling birds,",
-        3 => "Three French hens,",
-        2 => "Two turtle doves, and", // https://commons.wikimedia.org/wiki/File:12_days_angus.png
-        1 => "A partridge in a pear tree!",
-        0 => "Segmentation fault (core dumped)",
-        _ => "Several bugs a-bugging",
+fn verse_line(i: u8) -> String {
+    if i <= 12 {
+        match i {
+            12 => "Twelve drummers drumming,",
+            11 => "Eleven pipers piping,",
+            10 => "Ten lords a-leaping,",
+            9 => "Nine ladies dancing,",
+            8 => "Eight maids a-milking,",
+            7 => "Seven swans a-swimming,",
+            6 => "Six geese a-laying,",
+            5 => "Five golden rings,", // North American variant
+            4 => "Four calling birds,",
+            3 => "Three French hens,",
+            2 => "Two turtle doves, and", // https://commons.wikimedia.org/wiki/File:12_days_angus.png
+            1 => "A partridge in a pear tree!",
+            0 => "Segmentation fault (core dumped)",
+            _ => "", // unreachable
+        }
+        .to_string()
+    } else {
+        format!("{} bugs a-bugging", i)
     }
 }
 
