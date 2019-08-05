@@ -4,7 +4,7 @@ use std::io;
 fn main() {
     let degrees: f32 = read_float();
     let unit: Unit = read_unit();
-    let temperature = Temperature(degrees, unit);
+    let temperature = Temperature::new(degrees, unit);
     println!("The temperature you entered is {}", temperature.to_string());
     warn_absolute_zero(temperature);
     println!(
@@ -15,9 +15,9 @@ fn main() {
 }
 
 fn convert(t: Temperature) -> Temperature {
-    match t.1 {
-        Fahrenheit => Temperature(to_celsius(t.0), Celsius),
-        Celsius => Temperature(to_fahrenheit(t.0), Fahrenheit),
+    match t.unit {
+        Fahrenheit => Temperature::new(to_celsius(t.degrees), Celsius),
+        Celsius => Temperature::new(to_fahrenheit(t.degrees), Fahrenheit),
     }
 }
 
@@ -37,11 +37,23 @@ impl ToString for Unit {
 }
 
 #[derive(Copy, Clone)]
-struct Temperature(f32, Unit);
+struct Temperature {
+    degrees: f32,
+    unit: Unit,
+}
+
+impl Temperature {
+    fn new(degrees: f32, unit: Unit) -> Temperature {
+        Temperature {
+            degrees: degrees,
+            unit: unit,
+        }
+    }
+}
 
 impl ToString for Temperature {
     fn to_string(&self) -> String {
-        format!("{} {}", self.0, self.1.to_string())
+        format!("{} {}", self.degrees, self.unit.to_string())
     }
 }
 
@@ -54,11 +66,11 @@ fn to_fahrenheit(c: f32) -> f32 {
 }
 
 fn warn_absolute_zero(t: Temperature) {
-    let abs_zero = match t.1 {
-        Fahrenheit => Temperature(-459.67, Fahrenheit),
-        Celsius => Temperature(-273.15, Celsius),
+    let abs_zero = match t.unit {
+        Fahrenheit => Temperature::new(-459.67, Fahrenheit),
+        Celsius => Temperature::new(-273.15, Celsius),
     };
-    if t.0 < abs_zero.0 {
+    if t.degrees < abs_zero.degrees {
         println!(
             "Warning! {} is less than absolute zero ({}).",
             t.to_string(),
