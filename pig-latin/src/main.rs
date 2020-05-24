@@ -1,14 +1,29 @@
+use itertools::join;
+
 fn main() {
-    println!("{}, {}", pig_latin("hello"), pig_latin("world"));
-    let words_to_try = vec!["food", "social", "distancing", "pikachu", "spot", "squirtle"];
-    for word in words_to_try {
-        println!("{} → {}", word, pig_latin(word));
+    println!("{}", translate_line("hello world"));
+    let sentences = vec![
+        "hello world",
+        "social distancing",
+        "stop the spread",
+        "pikachu",
+        "x marks the spot",
+        "squirtle",
+        "truck"
+    ];
+    for sentence in sentences {
+        println!("{} → {}", sentence, translate_line(sentence));
     }
 }
 
-/// Converts the given word to pig Latin.
+/// Translates a line of whitespace-separated words into Pig Latin.
+fn translate_line(line: &str) -> String {
+    join(line.split_whitespace().map(translate_word), " ")
+}
+
+/// Converts the given word to Pig Latin.
 /// Requires: The first character in the string is a letter.
-fn pig_latin(word: &str) -> String {
+fn translate_word(word: &str) -> String {
     let mut word_chars = word.chars();
     if let Some(first_letter) = word_chars.next() {
         if is_vowel(first_letter) {
