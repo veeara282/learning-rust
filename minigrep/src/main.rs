@@ -1,10 +1,14 @@
 use std::env;
 use std::fs;
+use std::process;
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
 
-    let args = parse_config(&argv);
+    let args = GrepArgs::build(&argv).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
 
     println!("Searching for {}", args.query);
     println!("In file {}", args.file_path);
@@ -20,9 +24,15 @@ struct GrepArgs {
     file_path: String,
 }
 
-fn parse_config(argv: &[String]) -> GrepArgs {
-    GrepArgs {
-        query: argv[1].clone(),
-        file_path: argv[2].clone(),
+impl GrepArgs {
+    fn build(argv: &[String]) -> Result<GrepArgs, &'static str> {
+        if argv.len() < 3 {
+            return Err("not enough arguments");
+        }
+
+        let query = argv[1].clone();
+        let file_path = argv[2].clone();
+
+        Ok(GrepArgs { query, file_path })
     }
 }
