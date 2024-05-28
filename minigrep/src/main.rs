@@ -5,15 +5,19 @@ use std::process;
 fn main() {
     let argv: Vec<String> = env::args().collect();
 
-    let args = GrepArgs::build(&argv).unwrap_or_else(|err| {
+    let config = GrepArgs::build(&argv).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
 
-    println!("Searching for {}", args.query);
-    println!("In file {}", args.file_path);
+    println!("Searching for {}", config.query);
+    println!("In file {}", config.file_path);
 
-    let contents = fs::read_to_string(args.file_path)
+    run(config);
+}
+
+fn run(config: GrepArgs) {
+    let contents = fs::read_to_string(config.file_path)
         .expect("Should have been able to read the file");
 
     println!("With text:\n{contents}");
