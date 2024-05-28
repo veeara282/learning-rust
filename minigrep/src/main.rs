@@ -1,11 +1,6 @@
 use std::env;
 use std::fs;
 
-struct GrepArgs<'a> {
-    query: &'a str,
-    file_path: &'a str,
-}
-
 fn main() {
     let argv: Vec<String> = env::args().collect();
 
@@ -20,6 +15,14 @@ fn main() {
     println!("With text:\n{contents}");
 }
 
+struct GrepArgs {
+    query: String,
+    file_path: String,
+}
+
 fn parse_config(argv: &[String]) -> GrepArgs {
-    GrepArgs { query: &argv[1], file_path: &argv[2] }
+    GrepArgs {
+        query: argv[1].clone(),
+        file_path: argv[2].clone(),
+    }
 }
